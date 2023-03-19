@@ -38,7 +38,7 @@ pub enum StratumAction {
     KeepAliveOk,
 }
 
-pub struct  StratumClient {
+pub struct StratumClient {
     command_sender: Sender<StratumCmd>,
     send_thread: thread::JoinHandle<()>,
     rcv_thread: thread::JoinHandle<()>,

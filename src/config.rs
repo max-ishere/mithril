@@ -9,7 +9,7 @@ use std::path::Path;
 
 pub const CONFIG_FILE_NAME: &str = "config.toml";
 
-/// contains all configurations for mithril
+/// Contains all configurations for mithril
 #[derive(Clone)]
 pub struct MithrilConfig {
     pub pool_conf: PoolConfig,
@@ -23,20 +23,22 @@ pub struct DonationConfig {
     pub percentage: f64,
 }
 
-pub fn read_config(conf_file: &Path, filename: &str) -> Result<MithrilConfig, config::ConfigError> {
-    let config = parse_conf(conf_file, filename)?;
+impl MithrilConfig {
+    pub fn read_config(conf_file: &Path) -> Result<MithrilConfig, config::ConfigError> {
+        let config = parse_conf(conf_file)?;
 
-    let pool_conf = pool_config(&config)?;
-    let worker_conf = worker_config(&config)?;
-    let metric_conf = metric_config(&config)?;
-    let donation_conf = donation_config(&config)?;
+        let pool_conf = pool_config(&config)?;
+        let worker_conf = worker_config(&config)?;
+        let metric_conf = metric_config(&config)?;
+        let donation_conf = donation_config(&config)?;
 
-    Ok(MithrilConfig {
-        pool_conf,
-        worker_conf,
-        metric_conf,
-        donation_conf,
-    })
+        Ok(MithrilConfig {
+            pool_conf,
+            worker_conf,
+            metric_conf,
+            donation_conf,
+        })
+    }
 }
 
 fn donation_config(conf: &Config) -> Result<DonationConfig, ConfigError> {
@@ -112,10 +114,15 @@ fn get_u64_no_zero(conf: &Config, field: &str) -> Result<u64, ConfigError> {
     Ok(val as u64)
 }
 
-fn parse_conf(conf_file: &Path, filename: &str) -> Result<Config, ConfigError> {
+fn parse_conf(conf_file: &Path) -> Result<Config, ConfigError> {
     if conf_file.exists() {
         let mut conf = Config::default();
-        conf.merge(File::with_name(filename))?;
+        conf.merge(File::with_name(
+            &conf_file
+                .file_name()
+                .ok_or_else(|| ConfigError::Message(conf_file.to_string_lossy().to_string()))?
+                .to_string_lossy(),
+        ))?;
         return Ok(conf);
     }
     Err(ConfigError::Message("config file not found".to_string()))

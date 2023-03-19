@@ -2,19 +2,23 @@
 extern crate log;
 
 use crossbeam_channel::{select, unbounded, Receiver};
-use mithril::bandit_tools;
-use mithril::metric;
-use mithril::config;
-use mithril::randomx::memory::VmMemoryAllocator;
-use mithril::stratum::{StratumAction, StratumClient};
-use mithril::timer;
-use mithril::worker::worker_pool;
-use mithril::worker::worker_pool::WorkerPool;
-use std::io;
-use std::io::Error;
-use std::path::Path;
-use std::thread;
-use std::time::Duration;
+
+use mithril::{
+    self, bandit_tools,
+    config::MithrilConfig,
+    metric,
+    randomx::memory::VmMemoryAllocator,
+    stratum::{StratumAction, StratumClient},
+    timer,
+    worker::worker_pool::{self, WorkerPool},
+};
+
+use std::{
+    io::{self, Error},
+    path::Path,
+    thread,
+    time::Duration,
+};
 
 use bandit::MultiArmedBandit;
 
@@ -29,9 +33,8 @@ fn main() {
     env_logger::init();
 
     //Read config
-    let cwd_path = &format!("{}{}", "./", config::CONFIG_FILE_NAME);
-    let config =
-        config::read_config(Path::new(cwd_path), config::CONFIG_FILE_NAME).unwrap();
+    let cwd_path = &format!("{}{}", "./", mithril::config::CONFIG_FILE_NAME);
+    let config = MithrilConfig::read_config(Path::new(cwd_path)).unwrap();
 
     if config.donation_conf.percentage > 0.0 {
         print_donation_hint(config.donation_conf.percentage);
@@ -55,7 +58,7 @@ fn main() {
         let (client_err_sndr, client_err_rcvr) = unbounded();
 
         let conf = if donation_hashing {
-            config::donation_conf()
+            mithril::config::donation_conf()
         } else {
             config.pool_conf.clone()
         };
