@@ -5,10 +5,10 @@ use crossbeam_channel::{select, unbounded, Receiver};
 
 use mithril::{
     self, bandit_tools,
-    config::MithrilConfig,
+    config::{MithrilConfig, CONFIG_FILE_NAME},
     metric,
     randomx::memory::VmMemoryAllocator,
-    stratum::{StratumAction, StratumClient},
+    stratum::{stratum_data::PoolConfig, StratumAction, StratumClient},
     timer,
     worker::worker_pool::{self, WorkerPool},
 };
@@ -29,12 +29,11 @@ enum MainLoopExit {
 }
 
 #[allow(clippy::unnecessary_unwrap)]
-fn main() {
+fn main() -> anyhow::Result<()> {
     env_logger::init();
 
     //Read config
-    let cwd_path = &format!("{}{}", "./", mithril::config::CONFIG_FILE_NAME);
-    let config = MithrilConfig::from_file(Path::new(cwd_path)).unwrap();
+    let config = MithrilConfig::from_file(Path::new(CONFIG_FILE_NAME))?;
 
     if config.donation.percentage > 0.0 {
         print_donation_hint(config.donation.percentage);
@@ -58,7 +57,7 @@ fn main() {
         let (client_err_sndr, client_err_rcvr) = unbounded();
 
         let conf = if donation_hashing {
-            mithril::config::donation_conf()
+            PoolConfig::for_donation()
         } else {
             config.pool.clone()
         };

@@ -7,6 +7,9 @@
 extern crate serde_derive;
 #[macro_use]
 extern crate log;
+#[macro_use]
+extern crate thiserror;
+
 #[cfg(test)]
 #[macro_use]
 extern crate test_case;

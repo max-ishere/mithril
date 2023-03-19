@@ -4,6 +4,8 @@ use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::Arc;
 use std::thread;
 
+use serde::Deserialize;
+
 use self::crossbeam_channel::{unbounded, Receiver, Sender};
 use super::super::byte_string;
 use super::super::randomx::memory::{VmMemory, VmMemoryAllocator};

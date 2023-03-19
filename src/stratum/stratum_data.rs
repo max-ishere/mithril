@@ -120,4 +120,12 @@ impl PoolConfig {
             pool_password: password.to_string(),
         }
     }
+
+    pub fn for_donation() -> Self {
+        Self {
+            pool_address: "xmrpool.eu:3333".to_string(),
+            pool_password: "x".to_string(),
+            wallet_address: "48y3RCT5SzSS4jumHm9rRL91eWWzd6xcVGSCF1KUZGWYJ6npqwFxHee4xkLLNUqY4NjiswdJhxFALeRqzncHoToeJMg2bhL".to_string()
+        }
+    }
 }
