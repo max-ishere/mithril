@@ -1,12 +1,7 @@
 #[macro_use]
 extern crate log;
 
-extern crate bandit;
-extern crate crossbeam_channel;
-extern crate env_logger;
-extern crate mithril;
-
-use self::crossbeam_channel::{select, unbounded, Receiver};
+use crossbeam_channel::{select, unbounded, Receiver};
 use mithril::bandit_tools;
 use mithril::metric;
 use mithril::mithril_config;

@@ -1,8 +1,8 @@
 extern crate config;
 
-use metric::MetricConfig;
-use stratum::stratum_data::PoolConfig;
-use worker::worker_pool::WorkerConfig;
+use crate::metric::MetricConfig;
+use crate::stratum::stratum_data::PoolConfig;
+use crate::worker::worker_pool::WorkerConfig;
 
 use self::config::{Config, ConfigError, File};
 use std;
