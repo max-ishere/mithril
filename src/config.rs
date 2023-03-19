@@ -1,11 +1,10 @@
-extern crate config;
+//! Defines mithril's `config.toml` file structure and content.
 
 use crate::metric::MetricConfig;
 use crate::stratum::stratum_data::PoolConfig;
 use crate::worker::worker_pool::WorkerConfig;
 
-use self::config::{Config, ConfigError, File};
-use std;
+use config::{Config, ConfigError, File};
 use std::path::Path;
 
 pub const CONFIG_FILE_NAME: &str = "config.toml";

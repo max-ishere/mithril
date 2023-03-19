@@ -1,6 +1,6 @@
 extern crate mithril;
 
-use mithril::mithril_config::DonationConfig;
+use mithril::config::DonationConfig;
 use mithril::timer;
 use mithril::worker::worker_pool::WorkerConfig;
 

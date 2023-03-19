@@ -1,6 +1,6 @@
 extern crate crossbeam_channel;
 
-use crate::mithril_config::DonationConfig;
+use crate::config::DonationConfig;
 use crate::worker::worker_pool::WorkerConfig;
 
 use self::crossbeam_channel::{unbounded, Receiver};

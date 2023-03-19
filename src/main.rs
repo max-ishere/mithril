@@ -4,7 +4,7 @@ extern crate log;
 use crossbeam_channel::{select, unbounded, Receiver};
 use mithril::bandit_tools;
 use mithril::metric;
-use mithril::mithril_config;
+use mithril::config;
 use mithril::randomx::memory::VmMemoryAllocator;
 use mithril::stratum::{StratumAction, StratumClient};
 use mithril::timer;
@@ -29,9 +29,9 @@ fn main() {
     env_logger::init();
 
     //Read config
-    let cwd_path = &format!("{}{}", "./", mithril_config::CONFIG_FILE_NAME);
+    let cwd_path = &format!("{}{}", "./", config::CONFIG_FILE_NAME);
     let config =
-        mithril_config::read_config(Path::new(cwd_path), mithril_config::CONFIG_FILE_NAME).unwrap();
+        config::read_config(Path::new(cwd_path), config::CONFIG_FILE_NAME).unwrap();
 
     if config.donation_conf.percentage > 0.0 {
         print_donation_hint(config.donation_conf.percentage);
@@ -55,7 +55,7 @@ fn main() {
         let (client_err_sndr, client_err_rcvr) = unbounded();
 
         let conf = if donation_hashing {
-            mithril_config::donation_conf()
+            config::donation_conf()
         } else {
             config.pool_conf.clone()
         };

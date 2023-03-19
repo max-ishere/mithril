@@ -12,7 +12,7 @@ extern crate strum;
 pub mod bandit_tools;
 pub mod byte_string;
 pub mod metric;
-pub mod mithril_config;
+pub mod config;
 pub mod randomx;
 pub mod stratum;
 pub mod timer;
