@@ -51,7 +51,7 @@ in the nightly version of Rust. The nightly version is best installed with [rust
 Once you have the nightly version installed, type `cargo build --release` for an optimised binary.
 The binary can be found in the `target/release/` folder.
 
-Mithril expects a `config.toml` in the working directory. Copy the `default_config.toml` as `config.toml` to the Mithril
+Mithril expects a `mithril.toml` in the working directory. Copy the `default_config.toml` as `mithril.toml` to the Mithril
 working directory. You need at least configure your Monero address in the `[pool]` section for the reward and the `num_threads` depending on your machine (a good start is to use 2x number of your cores on your machine).
 
 If you get a `wrong instruction set` kind of error you can try to disable hardware AES with the `has_aes` flag in the
@@ -63,7 +63,7 @@ If you find any issues, please report them here: [Mithril Issues](https://github
 
 ### Configuration
 
-Auto-Tuning is enabled by default in Mithril. You can disable and configure auto-tuning in the config.toml:
+Auto-Tuning is enabled by default in Mithril. You can disable and configure auto-tuning in the mithril.toml:
 
 ```toml
 [worker]

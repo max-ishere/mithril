@@ -13,7 +13,7 @@ serde = "1.0.137"
 serde_json = "1.0.81"
 serde_derive = "1.0.137"
 strum = { version = "0.24.0", features = ["derive"] }
-config = "0.13.1"
+config = "0.13.3"
 log = "0.4.17"
 env_logger = "0.10.0"
 num_cpus = "1.13.1"
@@ -22,8 +22,10 @@ dirs = "4.0.0"
 crossbeam-channel = "0.5.4"
 rust-argon2 = { git = "https://github.com/Ragnaroek/rust-argon2" }
 anyhow = { version = "1.0.70", features = ["backtrace"] }
+toml = "0.7.3"
 
 
 [dev-dependencies]
 difference = "2.0.0"
 lazy_static = "1.4.0"
+test-case = "3.0.0"

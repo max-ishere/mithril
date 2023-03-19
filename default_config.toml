@@ -1,8 +1,11 @@
 
+# Mithril default config file
+# You have to edit this before you can use the miner.
+
 [pool]
 pool_address = "xmrpool.eu:3333"
-wallet_address = ""
-pool_password = ""
+wallet_address = "wallet"
+pool_password = "x"
 
 [worker]
 num_threads = 8

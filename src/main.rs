@@ -34,21 +34,21 @@ fn main() {
 
     //Read config
     let cwd_path = &format!("{}{}", "./", mithril::config::CONFIG_FILE_NAME);
-    let config = MithrilConfig::read_config(Path::new(cwd_path)).unwrap();
+    let config = MithrilConfig::from_file(Path::new(cwd_path)).unwrap();
 
-    if config.donation_conf.percentage > 0.0 {
-        print_donation_hint(config.donation_conf.percentage);
+    if config.donation.percentage > 0.0 {
+        print_donation_hint(config.donation.percentage);
     }
 
-    let mut bandit = if config.worker_conf.auto_tune {
+    let mut bandit = if config.worker.auto_tune {
         Some(bandit_tools::setup_bandit(
-            config.worker_conf.auto_tune_log.clone(),
+            config.worker.auto_tune_log.clone(),
         ))
     } else {
         None
     };
 
-    let timer_rcvr = timer::setup(&config.worker_conf, &config.donation_conf);
+    let timer_rcvr = timer::setup(&config.worker, &config.donation);
     let mut donation_hashing = false;
     let mut vm_memory_allocator = VmMemoryAllocator::initial();
 
@@ -60,7 +60,7 @@ fn main() {
         let conf = if donation_hashing {
             mithril::config::donation_conf()
         } else {
-            config.pool_conf.clone()
+            config.pool.clone()
         };
 
         let login_result = StratumClient::login(conf, client_err_sndr, stratum_sndr);
@@ -76,17 +76,17 @@ fn main() {
             info!("trying arm with {} #threads", selected_arm.num_threads);
             (Some(selected_arm), selected_arm.num_threads)
         } else {
-            (None, config.worker_conf.num_threads)
+            (None, config.worker.num_threads)
         };
 
         let (metric_sndr, metric_rcvr) = unbounded();
-        let metric = metric::start(config.metric_conf.clone(), metric_rcvr);
+        let metric = metric::start(config.metric.clone(), metric_rcvr);
 
         //worker pool start
         let mut pool = worker_pool::start(
             num_threads,
             &share_sndr,
-            config.metric_conf.resolution,
+            config.metric.resolution,
             &metric_sndr.clone(),
             vm_memory_allocator,
         );
@@ -118,7 +118,7 @@ fn main() {
                     //do not save reward for donation hashing, it probably only runs for a short period
                     let bandit_ref = bandit.as_mut().unwrap();
                     let reward = (hashes as f64
-                        / (config.worker_conf.auto_tune_interval_minutes as f64 * 60.0))
+                        / (config.worker.auto_tune_interval_minutes as f64 * 60.0))
                         / 1000.0; /*kH/s*/
                     info!("adding reward {:?} for arm {:?}", reward, arm);
                     bandit_ref.update(arm.unwrap(), reward);

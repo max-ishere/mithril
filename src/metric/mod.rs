@@ -8,12 +8,29 @@ use std::sync::Arc;
 use std::thread;
 use std::time;
 
-#[derive(Clone)]
+/// Determines how to output the miner's stats/performance
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct MetricConfig {
     pub enabled: bool,
     pub resolution: u64,
     pub sample_interval_seconds: u64,
     pub report_file: String,
+}
+
+impl MetricConfig {
+    pub fn new(
+        enabled: bool,
+        resolution: u64,
+        sample_interval_seconds: u64,
+        report_file: &str,
+    ) -> Self {
+        Self {
+            enabled,
+            resolution,
+            sample_interval_seconds,
+            report_file: report_file.to_string(),
+        }
+    }
 }
 
 pub struct Metric {

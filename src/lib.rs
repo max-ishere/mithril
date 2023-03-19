@@ -7,7 +7,9 @@
 extern crate serde_derive;
 #[macro_use]
 extern crate log;
-extern crate strum;
+#[cfg(test)]
+#[macro_use]
+extern crate test_case;
 
 pub mod bandit_tools;
 pub mod byte_string;

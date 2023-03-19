@@ -104,9 +104,20 @@ pub struct Share {
     pub hash: String,
 }
 
-#[derive(Debug, Clone)]
+/// Pool connection settings inside the TOML file.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct PoolConfig {
     pub pool_address: String,
     pub wallet_address: String,
     pub pool_password: String,
+}
+
+impl PoolConfig {
+    pub fn new(url: &str, wallet: &str, password: &str) -> Self {
+        Self {
+            pool_address: url.to_string(),
+            wallet_address: wallet.to_string(),
+            pool_password: password.to_string(),
+        }
+    }
 }

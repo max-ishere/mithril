@@ -6,7 +6,7 @@
 **/*.rs.bk
 
 # real config with potential credentials
-config.toml
+mithril.toml
 
 hash_report_release.csv
 hash_report_dev.csv

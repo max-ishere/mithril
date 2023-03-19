@@ -1,30 +1,65 @@
-//! Defines mithril's `config.toml` file structure and content.
+//! Defines mithril's `mithril.toml` config file structure and content.
 
 use crate::metric::MetricConfig;
 use crate::stratum::stratum_data::PoolConfig;
 use crate::worker::worker_pool::WorkerConfig;
 
 use config::{Config, ConfigError, File};
-use std::path::Path;
+use serde::{
+    de::{self, Expected},
+    Deserialize, Deserializer,
+};
+use std::{fmt::Display, path::Path, str::FromStr};
 
-pub const CONFIG_FILE_NAME: &str = "config.toml";
+pub const CONFIG_FILE_NAME: &str = "mithril.toml";
 
-/// Contains all configurations for mithril
-#[derive(Clone)]
+/// `mithril.toml` definition
+///
+/// Each field is its own TOML key like this:
+/// ```toml
+/// [pool]
+/// ```
+///
+/// Each field within a substruct is a subkey like this:
+/// ```toml
+/// [pool]
+/// pool_address = "https://example.com:1111"
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 pub struct MithrilConfig {
-    pub pool_conf: PoolConfig,
-    pub worker_conf: WorkerConfig,
-    pub metric_conf: MetricConfig,
-    pub donation_conf: DonationConfig,
+    pub pool: PoolConfig,
+    pub worker: WorkerConfig,
+    /// Performance measurements
+    pub metric: MetricConfig,
+    pub donation: DonationConfig,
 }
 
-#[derive(Clone)]
+/// Sets the donation settings
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 pub struct DonationConfig {
+    /// `0` disables donation mining, `1..100` will make your miner mine on
+    /// the project's address for a portion of the time.
+    #[serde(deserialize_with = "str_to_percentage")]
     pub percentage: f64,
 }
 
+fn str_to_percentage<'de, D>(deserializer: D) -> Result<f64, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let num: f64 = Deserialize::deserialize(deserializer)?;
+    // ceil because 100.1 is invalid
+    match num.ceil() as isize {
+        i if (0..=100).contains(&i) => Ok(num),
+        _ => Err(de::Error::invalid_value(
+            de::Unexpected::Float(num),
+            &"within 0 to 100",
+        )),
+    }
+}
+
 impl MithrilConfig {
-    pub fn read_config(conf_file: &Path) -> Result<MithrilConfig, config::ConfigError> {
+    pub fn from_file(conf_file: &Path) -> Result<MithrilConfig, config::ConfigError> {
+        // TODO: Rewrite this function using Self::deserialize()
         let config = parse_conf(conf_file)?;
 
         let pool_conf = pool_config(&config)?;
@@ -33,10 +68,10 @@ impl MithrilConfig {
         let donation_conf = donation_config(&config)?;
 
         Ok(MithrilConfig {
-            pool_conf,
-            worker_conf,
-            metric_conf,
-            donation_conf,
+            pool: pool_conf,
+            worker: worker_conf,
+            metric: metric_conf,
+            donation: donation_conf,
         })
     }
 }
@@ -133,5 +168,45 @@ pub fn donation_conf() -> PoolConfig {
         pool_address: "xmrpool.eu:3333".to_string(),
         pool_password: "x".to_string(),
         wallet_address: "48y3RCT5SzSS4jumHm9rRL91eWWzd6xcVGSCF1KUZGWYJ6npqwFxHee4xkLLNUqY4NjiswdJhxFALeRqzncHoToeJMg2bhL".to_string()
+    }
+}
+
+#[cfg(test)]
+pub mod tests {
+    use super::*;
+
+    const DEFAULT_CONFIG_FILE: &'static str = include_str!("../default_config.toml");
+
+    #[test]
+    fn config_parsing() {
+        let toml: toml::Value = toml::from_str(DEFAULT_CONFIG_FILE).unwrap();
+        let parsed = MithrilConfig::deserialize(toml).unwrap();
+        assert_eq!(
+            parsed,
+            MithrilConfig {
+                pool: PoolConfig::new("xmrpool.eu:3333", "wallet", "x"),
+                worker: WorkerConfig::new(8, true, 15, "./bandit.log"),
+                metric: MetricConfig::new(false, 100, 60, "/path/to/hash/report/file.csv"),
+                donation: DonationConfig { percentage: 2.5 }
+            }
+        );
+    }
+
+    #[test_case(0.0, true)]
+    #[test_case(100.0, true)]
+    #[test_case(52.0376, true)]
+    #[test_case(-1.83, false; "negative 1.83")]
+    #[test_case(1000.1, false)]
+    #[test_case(100.0001, false)]
+    fn percentage_is_validated(percentage: f64, valid: bool) {
+        let conf = format!("percentage = {}", percentage);
+        let toml: toml::Value = toml::from_str(&conf).unwrap();
+        let parsed = DonationConfig::deserialize(toml);
+
+        if valid {
+            assert_eq!(parsed.unwrap(), DonationConfig { percentage });
+        } else {
+            assert!(parsed.is_err());
+        }
     }
 }

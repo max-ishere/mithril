@@ -17,7 +17,8 @@ pub struct WorkerPool {
     pub vm_memory_allocator: VmMemoryAllocator,
 }
 
-#[derive(Clone)]
+/// Miner's settings
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct WorkerConfig {
     pub num_threads: u64,
     pub auto_tune: bool,
@@ -25,6 +26,21 @@ pub struct WorkerConfig {
     pub auto_tune_log: String,
 }
 
+impl WorkerConfig {
+    pub fn new(
+        num_threads: u64,
+        auto_tune: bool,
+        auto_tune_interval_minutes: u64,
+        auto_tune_log: &str,
+    ) -> Self {
+        Self {
+            num_threads,
+            auto_tune,
+            auto_tune_interval_minutes,
+            auto_tune_log: auto_tune_log.to_string(),
+        }
+    }
+}
 pub struct JobData {
     pub miner_id: String,
     pub seed_hash: String,
