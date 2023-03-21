@@ -5,10 +5,10 @@ use crossbeam_channel::{select, unbounded, Receiver};
 
 use mithril::{
     self, bandit_tools,
-    config::{MithrilConfig, CONFIG_FILE_NAME},
+    config::{MithrilConfig, PoolConfig, CONFIG_FILE_NAME},
     metric,
     randomx::memory::VmMemoryAllocator,
-    stratum::{stratum_data::PoolConfig, StratumAction, StratumClient},
+    stratum::{StratumAction, StratumClient},
     timer,
     worker::worker_pool::{self, WorkerPool},
 };

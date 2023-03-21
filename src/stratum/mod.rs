@@ -4,6 +4,8 @@ extern crate crossbeam_channel;
 extern crate serde;
 extern crate serde_json;
 
+use crate::config::PoolConfig;
+
 use self::crossbeam_channel::{unbounded, Receiver, SendError, Sender};
 use std::io;
 use std::io::{BufRead, BufReader, BufWriter, Error, ErrorKind, Write};
@@ -50,7 +52,7 @@ pub struct StratumClient {
 /// All operation in the client are async
 impl StratumClient {
     pub fn login(
-        pool_conf: stratum_data::PoolConfig,
+        pool_conf: PoolConfig,
         err_receiver: Sender<Error>,
         action_rcv: Sender<StratumAction>,
     ) -> io::Result<StratumClient> {
@@ -106,7 +108,7 @@ impl StratumClient {
     fn start_send_thread(
         writer: BufWriter<TcpStream>,
         command_rcv: Receiver<StratumCmd>,
-        pool_conf: stratum_data::PoolConfig,
+        pool_conf: PoolConfig,
         err_receiver: Sender<Error>,
     ) -> io::Result<thread::JoinHandle<()>> {
         thread::Builder::new()
@@ -249,7 +251,7 @@ pub fn submit_share(
 fn handle_stratum_send(
     rx: &Receiver<StratumCmd>,
     mut writer: BufWriter<TcpStream>,
-    pool_conf: &stratum_data::PoolConfig,
+    pool_conf: &PoolConfig,
 ) -> Result<(), Error> {
     loop {
         match rx.recv().expect("stratum receiver") {
@@ -300,7 +302,7 @@ fn do_stratum_submit_share(
 
 fn do_stratum_login(
     writer: &mut BufWriter<TcpStream>,
-    pool_conf: &stratum_data::PoolConfig,
+    pool_conf: &PoolConfig,
 ) -> Result<(), Error> {
     let login_req = stratum_data::LoginRequest {
         id: 1,

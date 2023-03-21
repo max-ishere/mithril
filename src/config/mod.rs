@@ -1,15 +1,15 @@
 //! Defines mithril's TOML config file structure and content, located at [`CONFIG_FILE_NAME`].
 //! See [`MithrilConfig`] for the details on how to write your TOML file.
 
-use crate::{
-    metric::MetricConfig, stratum::stratum_data::PoolConfig, worker::worker_pool::WorkerConfig,
-};
+use crate::{metric::MetricConfig, worker::worker_pool::WorkerConfig};
 use anyhow::Context;
 use serde::Deserialize;
 use std::{fs::read_to_string, io, str::FromStr};
 
 mod donation;
+mod pool;
 pub use donation::DonationConfig;
+pub use pool::PoolConfig;
 
 /// Config file location.
 pub const CONFIG_FILE_NAME: &str = "mithril.toml";
