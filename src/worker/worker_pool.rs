@@ -1,17 +1,22 @@
 extern crate crossbeam_channel;
 
+use crate::utils::W;
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::Arc;
 use std::thread;
 
-use serde::Deserialize;
+use serde::de::{self, Visitor};
+use serde::{Deserialize, Deserializer};
 
 use self::crossbeam_channel::{unbounded, Receiver, Sender};
-use super::super::byte_string;
-use super::super::randomx::memory::{VmMemory, VmMemoryAllocator};
-use super::super::randomx::vm::new_vm;
-use super::super::stratum;
-use super::super::stratum::stratum_data;
+use crate::{
+    byte_string,
+    randomx::{
+        memory::{VmMemory, VmMemoryAllocator},
+        vm::new_vm,
+    },
+    stratum::{self, stratum_data},
+};
 
 pub struct WorkerPool {
     thread_chan: Vec<Sender<WorkerCmd>>,
@@ -19,28 +24,130 @@ pub struct WorkerPool {
     pub vm_memory_allocator: VmMemoryAllocator,
 }
 
-/// Miner's settings
+/// TOML configuration of how the miner is using system resources
+///
+/// Sample configuration:
+/// ```rust
+/// # use mithril::worker::worker_pool::{WorkerConfig, AutoTuneConfig};
+/// # use serde::Deserialize;
+/// # let conf = r#"
+///   [worker]
+///   ## Omit this line for autodetection based on CPU cores
+///   threads = 2
+///
+///   ## you can set `autotune = false` to disable algorithmic settings tuning.
+///   autotune = { interval_minutes = 15, state_file = "bandit.log" }
+/// # "#;
+/// # let toml: toml::Value = toml::from_str(conf).unwrap();
+/// # let parsed: WorkerConfig = Deserialize::deserialize(toml["worker"].clone()).unwrap();
+/// # assert_eq!(
+/// #   parsed,
+/// #   WorkerConfig::new(2, AutoTuneConfig::new(15, "bandit.log"))
+/// # );
+/// ```
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct WorkerConfig {
-    pub num_threads: u64,
-    pub auto_tune: bool,
-    pub auto_tune_interval_minutes: u64,
-    pub auto_tune_log: String,
+    /// How many threads to use for mining
+    #[serde(default = "num_cpus::get")]
+    pub threads: usize,
+
+    /// Updates thread count for optimal performance
+    #[serde(default = "default_autotune")]
+    #[serde(deserialize_with = "false_or_autotune")]
+    pub autotune: Option<AutoTuneConfig>,
+}
+
+fn default_autotune() -> Option<AutoTuneConfig> {
+    Some(AutoTuneConfig::default())
+}
+
+impl Default for W<Option<AutoTuneConfig>> {
+    fn default() -> Self {
+        Some(AutoTuneConfig::default()).into()
+    }
+}
+
+/// TOML configuration on how to autotune mining settings.
+/// You can configure this in `[worker]` TOML key or separately via `[worker.autotune]`.
+///
+/// See [`WorkerConfig`] for details.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct AutoTuneConfig {
+    /// How long to evaluate a certain setting
+    pub interval_minutes: u64,
+    /// Where to store the settings
+    pub state_file: String,
+}
+
+/// If `autotune = false` then `None` else try to parse as if it is an [`AutoTuneConfig`] struct
+fn false_or_autotune<'de, D: Deserializer<'de>>(
+    deserializer: D,
+) -> Result<Option<AutoTuneConfig>, D::Error> {
+    // https://serde.rs/string-or-struct.html - How to convert several serialized types into one target deserialized type
+    impl<'de> Visitor<'de> for W<Option<AutoTuneConfig>> {
+        type Value = Self;
+
+        fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+            formatter.write_str("false or auto tune configuration")
+        }
+
+        fn visit_bool<E>(self, enabled: bool) -> Result<Self::Value, E>
+        where
+            E: serde::de::Error,
+        {
+            if !enabled {
+                Ok(W(None))
+            } else {
+                Err(E::invalid_value(
+                    serde::de::Unexpected::Bool(enabled),
+                    &"should be either `false` or auto tune's settings",
+                ))
+            }
+        }
+
+        fn visit_map<A>(self, map: A) -> Result<Self::Value, A::Error>
+        where
+            A: serde::de::MapAccess<'de>,
+        {
+            Ok(W(Some(Deserialize::deserialize(
+                de::value::MapAccessDeserializer::new(map),
+            )?)))
+        }
+    }
+
+    Ok(deserializer.deserialize_any(W(None))?.0)
+}
+
+impl AutoTuneConfig {
+    pub fn new(interval_minutes: u64, state_file: &str) -> Self {
+        Self {
+            interval_minutes,
+            state_file: state_file.to_string(),
+        }
+    }
+}
+
+impl Default for AutoTuneConfig {
+    fn default() -> Self {
+        Self {
+            interval_minutes: 15,
+            state_file: "bandit.log".to_string(),
+        }
+    }
 }
 
 impl WorkerConfig {
-    pub fn new(
-        num_threads: u64,
-        auto_tune: bool,
-        auto_tune_interval_minutes: u64,
-        auto_tune_log: &str,
-    ) -> Self {
+    pub fn new<A: Into<Option<AutoTuneConfig>>>(num_threads: usize, auto_tune: A) -> Self {
         Self {
-            num_threads,
-            auto_tune,
-            auto_tune_interval_minutes,
-            auto_tune_log: auto_tune_log.to_string(),
+            threads: num_threads,
+            autotune: auto_tune.into(),
         }
+    }
+}
+
+impl Default for WorkerConfig {
+    fn default() -> Self {
+        Self::new(num_cpus::get(), default_autotune())
     }
 }
 pub struct JobData {

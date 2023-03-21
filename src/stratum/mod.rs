@@ -54,9 +54,9 @@ impl StratumClient {
         err_receiver: Sender<Error>,
         action_rcv: Sender<StratumAction>,
     ) -> io::Result<StratumClient> {
-        info!("connecting to address: {}", pool_conf.pool_address);
+        info!("connecting to address: {}", pool_conf.user);
 
-        let (tcp_stream_hnd, reader, writer) = StratumClient::connect_tcp(&pool_conf.pool_address)?;
+        let (tcp_stream_hnd, reader, writer) = StratumClient::connect_tcp(&pool_conf.url)?;
 
         let miner_id = Arc::new(Mutex::new(Option::None));
         let (command_sender, command_receiver) = unbounded();
@@ -306,8 +306,8 @@ fn do_stratum_login(
         id: 1,
         method: "login".to_string(),
         params: stratum_data::LoginParams {
-            login: pool_conf.wallet_address.clone(),
-            pass: pool_conf.pool_password.clone(),
+            login: pool_conf.user.clone(),
+            pass: pool_conf.pass.clone(),
         },
     };
     let json = serde_json::to_string(&login_req).expect("marshaling login json");

@@ -32,16 +32,17 @@ enum MainLoopExit {
 fn main() -> anyhow::Result<()> {
     env_logger::init();
 
-    //Read config
-    let config = MithrilConfig::from_file(Path::new(CONFIG_FILE_NAME))?;
+    let config = MithrilConfig::from_file(CONFIG_FILE_NAME)?;
+    debug!("Loaded {CONFIG_FILE_NAME} configuration file");
+    trace!("Configuration: {config:#?}");
 
-    if config.donation.percentage > 0.0 {
-        print_donation_hint(config.donation.percentage);
+    if config.donation.0 > 0.0 {
+        print_donation_hint(config.donation.0);
     }
 
-    let mut bandit = if config.worker.auto_tune {
+    let mut bandit = if config.worker.autotune.is_some() {
         Some(bandit_tools::setup_bandit(
-            config.worker.auto_tune_log.clone(),
+            config.worker.autotune.clone().unwrap().state_file,
         ))
     } else {
         None
@@ -57,7 +58,7 @@ fn main() -> anyhow::Result<()> {
         let (client_err_sndr, client_err_rcvr) = unbounded();
 
         let conf = if donation_hashing {
-            PoolConfig::for_donation()
+            PoolConfig::donation_mode()
         } else {
             config.pool.clone()
         };
@@ -75,7 +76,7 @@ fn main() -> anyhow::Result<()> {
             info!("trying arm with {} #threads", selected_arm.num_threads);
             (Some(selected_arm), selected_arm.num_threads)
         } else {
-            (None, config.worker.num_threads)
+            (None, config.worker.threads as u64)
         };
 
         let (metric_sndr, metric_rcvr) = unbounded();
@@ -117,7 +118,8 @@ fn main() -> anyhow::Result<()> {
                     //do not save reward for donation hashing, it probably only runs for a short period
                     let bandit_ref = bandit.as_mut().unwrap();
                     let reward = (hashes as f64
-                        / (config.worker.auto_tune_interval_minutes as f64 * 60.0))
+                        // TODO: interval maybe inconsistent with other unwrap_or
+                        / (config.worker.autotune.as_ref().unwrap().interval_minutes as f64 * 60.0))
                         / 1000.0; /*kH/s*/
                     info!("adding reward {:?} for arm {:?}", reward, arm);
                     bandit_ref.update(arm.unwrap(), reward);

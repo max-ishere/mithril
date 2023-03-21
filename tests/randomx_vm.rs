@@ -209,262 +209,30 @@ fn test_register_to_bytes() {
 
     let bytes = reg.to_bytes();
 
-    assert_eq!(bytes[0], 0x80);
-    assert_eq!(bytes[1], 0x8);
-    assert_eq!(bytes[2], 0x81);
-    assert_eq!(bytes[3], 0x2d);
-    assert_eq!(bytes[4], 0xd1);
-    assert_eq!(bytes[5], 0xeb);
-    assert_eq!(bytes[6], 0xff);
-    assert_eq!(bytes[7], 0x34);
-    assert_eq!(bytes[8], 0xef);
-    assert_eq!(bytes[9], 0xad);
-    assert_eq!(bytes[10], 0x8);
-    assert_eq!(bytes[11], 0x62);
-    assert_eq!(bytes[12], 0xa);
-    assert_eq!(bytes[13], 0x26);
-    assert_eq!(bytes[14], 0x80);
-    assert_eq!(bytes[15], 0x6a);
-    assert_eq!(bytes[16], 0x2f);
-    assert_eq!(bytes[17], 0x29);
-    assert_eq!(bytes[18], 0x3b);
-    assert_eq!(bytes[19], 0xee);
-    assert_eq!(bytes[20], 0x8);
-    assert_eq!(bytes[21], 0x10);
-    assert_eq!(bytes[22], 0x5d);
-    assert_eq!(bytes[23], 0x4f);
-    assert_eq!(bytes[24], 0xd0);
-    assert_eq!(bytes[25], 0x17);
-    assert_eq!(bytes[26], 0x9c);
-    assert_eq!(bytes[27], 0x76);
-    assert_eq!(bytes[28], 0xd5);
-    assert_eq!(bytes[29], 0x80);
-    assert_eq!(bytes[30], 0x51);
-    assert_eq!(bytes[31], 0xb6);
-    assert_eq!(bytes[32], 0x28);
-    assert_eq!(bytes[33], 0xdb);
-    assert_eq!(bytes[34], 0x4f);
-    assert_eq!(bytes[35], 0x73);
-    assert_eq!(bytes[36], 0xed);
-    assert_eq!(bytes[37], 0x5a);
-    assert_eq!(bytes[38], 0x69);
-    assert_eq!(bytes[39], 0x2);
-    assert_eq!(bytes[40], 0xf5);
-    assert_eq!(bytes[41], 0xdf);
-    assert_eq!(bytes[42], 0x1d);
-    assert_eq!(bytes[43], 0xc0);
-    assert_eq!(bytes[44], 0xd4);
-    assert_eq!(bytes[45], 0x84);
-    assert_eq!(bytes[46], 0x6a);
-    assert_eq!(bytes[47], 0x3c);
-    assert_eq!(bytes[48], 0x99);
-    assert_eq!(bytes[49], 0xd6);
-    assert_eq!(bytes[50], 0x6);
-    assert_eq!(bytes[51], 0xfd);
-    assert_eq!(bytes[52], 0xad);
-    assert_eq!(bytes[53], 0x3c);
-    assert_eq!(bytes[54], 0xd9);
-    assert_eq!(bytes[55], 0xa9);
-    assert_eq!(bytes[56], 0xd9);
-    assert_eq!(bytes[57], 0x43);
-    assert_eq!(bytes[58], 0x76);
-    assert_eq!(bytes[59], 0x94);
-    assert_eq!(bytes[60], 0xf0);
-    assert_eq!(bytes[61], 0xe2);
-    assert_eq!(bytes[62], 0x8a);
-    assert_eq!(bytes[63], 0xc);
-    assert_eq!(bytes[64], 0x55);
-    assert_eq!(bytes[65], 0x9);
-    assert_eq!(bytes[66], 0x1d);
-    assert_eq!(bytes[67], 0x6);
-    assert_eq!(bytes[68], 0xcf);
-    assert_eq!(bytes[69], 0x23);
-    assert_eq!(bytes[70], 0x67);
-    assert_eq!(bytes[71], 0x85);
-    assert_eq!(bytes[72], 0x39);
-    assert_eq!(bytes[73], 0x26);
-    assert_eq!(bytes[74], 0xb);
-    assert_eq!(bytes[75], 0x21);
-    assert_eq!(bytes[76], 0x6b);
-    assert_eq!(bytes[77], 0x53);
-    assert_eq!(bytes[78], 0x36);
-    assert_eq!(bytes[79], 0x84);
-    assert_eq!(bytes[80], 0x13);
-    assert_eq!(bytes[81], 0x24);
-    assert_eq!(bytes[82], 0x43);
-    assert_eq!(bytes[83], 0x3);
-    assert_eq!(bytes[84], 0x53);
-    assert_eq!(bytes[85], 0x1f);
-    assert_eq!(bytes[86], 0x38);
-    assert_eq!(bytes[87], 0xfe);
-    assert_eq!(bytes[88], 0xb8);
-    assert_eq!(bytes[89], 0xb8);
-    assert_eq!(bytes[90], 0xba);
-    assert_eq!(bytes[91], 0x3);
-    assert_eq!(bytes[92], 0x27);
-    assert_eq!(bytes[93], 0x71);
-    assert_eq!(bytes[94], 0x27);
-    assert_eq!(bytes[95], 0x83);
-    assert_eq!(bytes[96], 0xa);
-    assert_eq!(bytes[97], 0xba);
-    assert_eq!(bytes[98], 0xec);
-    assert_eq!(bytes[99], 0x36);
-    assert_eq!(bytes[100], 0xfb);
-    assert_eq!(bytes[101], 0x31);
-    assert_eq!(bytes[102], 0x8b);
-    assert_eq!(bytes[103], 0x92);
-    assert_eq!(bytes[104], 0x21);
-    assert_eq!(bytes[105], 0x1d);
-    assert_eq!(bytes[106], 0x42);
-    assert_eq!(bytes[107], 0x21);
-    assert_eq!(bytes[108], 0x7a);
-    assert_eq!(bytes[109], 0xc0);
-    assert_eq!(bytes[110], 0x13);
-    assert_eq!(bytes[111], 0x92);
-    assert_eq!(bytes[112], 0xf4);
-    assert_eq!(bytes[113], 0xd7);
-    assert_eq!(bytes[114], 0x60);
-    assert_eq!(bytes[115], 0xae);
-    assert_eq!(bytes[116], 0xe2);
-    assert_eq!(bytes[117], 0x3d);
-    assert_eq!(bytes[118], 0xbb);
-    assert_eq!(bytes[119], 0x7e);
-    assert_eq!(bytes[120], 0xbb);
-    assert_eq!(bytes[121], 0x28);
-    assert_eq!(bytes[122], 0x88);
-    assert_eq!(bytes[123], 0x41);
-    assert_eq!(bytes[124], 0x13);
-    assert_eq!(bytes[125], 0x65);
-    assert_eq!(bytes[126], 0x88);
-    assert_eq!(bytes[127], 0x82);
-    assert_eq!(bytes[128], 0xc7);
-    assert_eq!(bytes[129], 0x94);
-    assert_eq!(bytes[130], 0x8a);
-    assert_eq!(bytes[131], 0x1d);
-    assert_eq!(bytes[132], 0xc1);
-    assert_eq!(bytes[133], 0xe);
-    assert_eq!(bytes[134], 0x85);
-    assert_eq!(bytes[135], 0x44);
-    assert_eq!(bytes[136], 0x57);
-    assert_eq!(bytes[137], 0xe4);
-    assert_eq!(bytes[138], 0x1);
-    assert_eq!(bytes[139], 0x44);
-    assert_eq!(bytes[140], 0x13);
-    assert_eq!(bytes[141], 0x59);
-    assert_eq!(bytes[142], 0xea);
-    assert_eq!(bytes[143], 0x45);
-    assert_eq!(bytes[144], 0x28);
-    assert_eq!(bytes[145], 0x2f);
-    assert_eq!(bytes[146], 0x42);
-    assert_eq!(bytes[147], 0xf9);
-    assert_eq!(bytes[148], 0x7c);
-    assert_eq!(bytes[149], 0x16);
-    assert_eq!(bytes[150], 0xea);
-    assert_eq!(bytes[151], 0x3f);
-    assert_eq!(bytes[152], 0xd8);
-    assert_eq!(bytes[153], 0x1b);
-    assert_eq!(bytes[154], 0xb3);
-    assert_eq!(bytes[155], 0x0);
-    assert_eq!(bytes[156], 0xe6);
-    assert_eq!(bytes[157], 0x70);
-    assert_eq!(bytes[158], 0x88);
-    assert_eq!(bytes[159], 0x42);
-    assert_eq!(bytes[160], 0x15);
-    assert_eq!(bytes[161], 0xcc);
-    assert_eq!(bytes[162], 0x72);
-    assert_eq!(bytes[163], 0x29);
-    assert_eq!(bytes[164], 0xc);
-    assert_eq!(bytes[165], 0x6a);
-    assert_eq!(bytes[166], 0xc1);
-    assert_eq!(bytes[167], 0x53);
-    assert_eq!(bytes[168], 0x5e);
-    assert_eq!(bytes[169], 0xd7);
-    assert_eq!(bytes[170], 0xe2);
-    assert_eq!(bytes[171], 0xf7);
-    assert_eq!(bytes[172], 0xed);
-    assert_eq!(bytes[173], 0xc);
-    assert_eq!(bytes[174], 0xdd);
-    assert_eq!(bytes[175], 0x53);
-    assert_eq!(bytes[176], 0x74);
-    assert_eq!(bytes[177], 0xb5);
-    assert_eq!(bytes[178], 0xa);
-    assert_eq!(bytes[179], 0x8c);
-    assert_eq!(bytes[180], 0x95);
-    assert_eq!(bytes[181], 0x80);
-    assert_eq!(bytes[182], 0x69);
-    assert_eq!(bytes[183], 0x3f);
-    assert_eq!(bytes[184], 0x7d);
-    assert_eq!(bytes[185], 0x5a);
-    assert_eq!(bytes[186], 0xb1);
-    assert_eq!(bytes[187], 0xdc);
-    assert_eq!(bytes[188], 0xd7);
-    assert_eq!(bytes[189], 0xfa);
-    assert_eq!(bytes[190], 0x79);
-    assert_eq!(bytes[191], 0x43);
-    assert_eq!(bytes[192], 0xdc);
-    assert_eq!(bytes[193], 0x0);
-    assert_eq!(bytes[194], 0xb5);
-    assert_eq!(bytes[195], 0xb);
-    assert_eq!(bytes[196], 0xf0);
-    assert_eq!(bytes[197], 0xdb);
-    assert_eq!(bytes[198], 0x2b);
-    assert_eq!(bytes[199], 0x45);
-    assert_eq!(bytes[200], 0x13);
-    assert_eq!(bytes[201], 0xc3);
-    assert_eq!(bytes[202], 0xfd);
-    assert_eq!(bytes[203], 0x8d);
-    assert_eq!(bytes[204], 0xe3);
-    assert_eq!(bytes[205], 0xce);
-    assert_eq!(bytes[206], 0x4d);
-    assert_eq!(bytes[207], 0xd1);
-    assert_eq!(bytes[208], 0xe3);
-    assert_eq!(bytes[209], 0xb2);
-    assert_eq!(bytes[210], 0x67);
-    assert_eq!(bytes[211], 0x6e);
-    assert_eq!(bytes[212], 0x6);
-    assert_eq!(bytes[213], 0x5a);
-    assert_eq!(bytes[214], 0xe7);
-    assert_eq!(bytes[215], 0x3b);
-    assert_eq!(bytes[216], 0xa7);
-    assert_eq!(bytes[217], 0x45);
-    assert_eq!(bytes[218], 0xc7);
-    assert_eq!(bytes[219], 0x80);
-    assert_eq!(bytes[220], 0xea);
-    assert_eq!(bytes[221], 0xf2);
-    assert_eq!(bytes[222], 0x3a);
-    assert_eq!(bytes[223], 0x86);
-    assert_eq!(bytes[224], 0x4);
-    assert_eq!(bytes[225], 0x9d);
-    assert_eq!(bytes[226], 0x92);
-    assert_eq!(bytes[227], 0x54);
-    assert_eq!(bytes[228], 0x9a);
-    assert_eq!(bytes[229], 0x85);
-    assert_eq!(bytes[230], 0x24);
-    assert_eq!(bytes[231], 0xdc);
-    assert_eq!(bytes[232], 0x88);
-    assert_eq!(bytes[233], 0x3d);
-    assert_eq!(bytes[234], 0x7);
-    assert_eq!(bytes[235], 0x94);
-    assert_eq!(bytes[236], 0x69);
-    assert_eq!(bytes[237], 0x8c);
-    assert_eq!(bytes[238], 0xff);
-    assert_eq!(bytes[239], 0x94);
-    assert_eq!(bytes[240], 0x34);
-    assert_eq!(bytes[241], 0xef);
-    assert_eq!(bytes[242], 0x85);
-    assert_eq!(bytes[243], 0xf2);
-    assert_eq!(bytes[244], 0x97);
-    assert_eq!(bytes[245], 0x35);
-    assert_eq!(bytes[246], 0x7f);
-    assert_eq!(bytes[247], 0x4b);
-    assert_eq!(bytes[248], 0x9c);
-    assert_eq!(bytes[249], 0xa5);
-    assert_eq!(bytes[250], 0x7f);
-    assert_eq!(bytes[251], 0x56);
-    assert_eq!(bytes[252], 0x19);
-    assert_eq!(bytes[253], 0xaa);
-    assert_eq!(bytes[254], 0x25);
-    assert_eq!(bytes[255], 0xe7);
+    assert_eq!(
+        bytes,
+        [
+            0x80, 0x08, 0x81, 0x2d, 0xd1, 0xeb, 0xff, 0x34, 0xef, 0xad, 0x08, 0x62, 0x0a, 0x26,
+            0x80, 0x6a, 0x2f, 0x29, 0x3b, 0xee, 0x08, 0x10, 0x5d, 0x4f, 0xd0, 0x17, 0x9c, 0x76,
+            0xd5, 0x80, 0x51, 0xb6, 0x28, 0xdb, 0x4f, 0x73, 0xed, 0x5a, 0x69, 0x02, 0xf5, 0xdf,
+            0x1d, 0xc0, 0xd4, 0x84, 0x6a, 0x3c, 0x99, 0xd6, 0x06, 0xfd, 0xad, 0x3c, 0xd9, 0xa9,
+            0xd9, 0x43, 0x76, 0x94, 0xf0, 0xe2, 0x8a, 0x0c, 0x55, 0x09, 0x1d, 0x06, 0xcf, 0x23,
+            0x67, 0x85, 0x39, 0x26, 0x0b, 0x21, 0x6b, 0x53, 0x36, 0x84, 0x13, 0x24, 0x43, 0x03,
+            0x53, 0x1f, 0x38, 0xfe, 0xb8, 0xb8, 0xba, 0x03, 0x27, 0x71, 0x27, 0x83, 0x0a, 0xba,
+            0xec, 0x36, 0xfb, 0x31, 0x8b, 0x92, 0x21, 0x1d, 0x42, 0x21, 0x7a, 0xc0, 0x13, 0x92,
+            0xf4, 0xd7, 0x60, 0xae, 0xe2, 0x3d, 0xbb, 0x7e, 0xbb, 0x28, 0x88, 0x41, 0x13, 0x65,
+            0x88, 0x82, 0xc7, 0x94, 0x8a, 0x1d, 0xc1, 0x0e, 0x85, 0x44, 0x57, 0xe4, 0x01, 0x44,
+            0x13, 0x59, 0xea, 0x45, 0x28, 0x2f, 0x42, 0xf9, 0x7c, 0x16, 0xea, 0x3f, 0xd8, 0x1b,
+            0xb3, 0x00, 0xe6, 0x70, 0x88, 0x42, 0x15, 0xcc, 0x72, 0x29, 0x0c, 0x6a, 0xc1, 0x53,
+            0x5e, 0xd7, 0xe2, 0xf7, 0xed, 0x0c, 0xdd, 0x53, 0x74, 0xb5, 0x0a, 0x8c, 0x95, 0x80,
+            0x69, 0x3f, 0x7d, 0x5a, 0xb1, 0xdc, 0xd7, 0xfa, 0x79, 0x43, 0xdc, 0x00, 0xb5, 0x0b,
+            0xf0, 0xdb, 0x2b, 0x45, 0x13, 0xc3, 0xfd, 0x8d, 0xe3, 0xce, 0x4d, 0xd1, 0xe3, 0xb2,
+            0x67, 0x6e, 0x06, 0x5a, 0xe7, 0x3b, 0xa7, 0x45, 0xc7, 0x80, 0xea, 0xf2, 0x3a, 0x86,
+            0x04, 0x9d, 0x92, 0x54, 0x9a, 0x85, 0x24, 0xdc, 0x88, 0x3d, 0x07, 0x94, 0x69, 0x8c,
+            0xff, 0x94, 0x34, 0xef, 0x85, 0xf2, 0x97, 0x35, 0x7f, 0x4b, 0x9c, 0xa5, 0x7f, 0x56,
+            0x19, 0xaa, 0x25, 0xe7,
+        ]
+    );
 }
 
 #[test]

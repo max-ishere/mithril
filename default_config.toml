@@ -2,26 +2,22 @@
 # Mithril default config file
 # You have to edit this before you can use the miner.
 
+# Run `cargo doc --open` and navigate to `mithril::config::MithrilConfig` for up to date documentation
+
+donation = 2.5
+
 [pool]
-pool_address = "xmrpool.eu:3333"
-wallet_address = "wallet"
-pool_password = "x"
+url = "example.com"
+pass = "x"
+user = "wallet"
 
 [worker]
-num_threads = 8
-auto_tune = true # if enabled, finds the best configuration for the hardware
-                 # via a multi-armed bandit algorithm. If this is enabled
-                 # the num_threads settings is ignored.
-auto_tune_interval_minutes = 15 # minutes how long a arm is evaluated before a new
-                                # arm is drawn
-auto_tune_log = "./bandit.log"
+threads = 8
+auto_tune = { interval_minutes = 15, state_file = "bandit.log" }
+
 
 [metric]
-enabled = false
-resolution = 100 #determines how often a hash result is reported
+enabled = true
+resolution = 100
 sample_interval_seconds = 60
-report_file = "/path/to/hash/report/file.csv"
-
-[donation]
-percentage = 2.5 # set to 0 to disable, percentage mining to address that
-                 # supports the project
+report_file = "mithril_metrics.csv"

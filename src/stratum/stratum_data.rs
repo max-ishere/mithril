@@ -1,5 +1,4 @@
-extern crate serde;
-extern crate serde_json;
+use serde::Deserialize;
 
 /// For checking the method in the json content and parsing further
 #[derive(Deserialize, Debug)]
@@ -104,28 +103,54 @@ pub struct Share {
     pub hash: String,
 }
 
+// Because doctest uses the whole block, but docstring - only string content
+// which isn't valid rust code.
+#[allow(rustdoc::invalid_rust_codeblocks)]
 /// Pool connection settings inside the TOML file.
+///
+/// Sample configuration:
+/// ```rust
+/// # use mithril::stratum::stratum_data::PoolConfig;
+/// # use serde::Deserialize;
+/// # let conf = r#"
+///   [pool]
+///   url = "xmr.example.com:1111"
+///   pass = "x"
+///   user = "800...dead"
+/// # "#;
+/// # let toml: toml::Value = toml::from_str(conf).unwrap();
+/// # let parsed: PoolConfig = Deserialize::deserialize(toml["pool"].clone()).unwrap();
+/// # assert_eq!(
+/// #   parsed,
+/// #   PoolConfig::new("xmr.example.com:1111", "x", "800...dead")
+/// # );
+/// ```
+///
+/// Most pools will expect `user` to be your XMR payout wallet (long string of numbers and letters),
+/// but some may use an email instead. The user string may also include things like rig IDs and share difficulty.
+/// So be sure to read what's on their website.
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct PoolConfig {
-    pub pool_address: String,
-    pub wallet_address: String,
-    pub pool_password: String,
+    pub url: String,
+    /// Password for pool to accept your connection.
+    pub pass: String,
+    pub user: String,
 }
 
 impl PoolConfig {
-    pub fn new(url: &str, wallet: &str, password: &str) -> Self {
+    pub fn new(url: &str, pass: &str, user: &str) -> Self {
         Self {
-            pool_address: url.to_string(),
-            wallet_address: wallet.to_string(),
-            pool_password: password.to_string(),
+            url: url.to_string(),
+            pass: pass.to_string(),
+            user: user.to_string(),
         }
     }
 
-    pub fn for_donation() -> Self {
+    pub fn donation_mode() -> Self {
         Self {
-            pool_address: "xmrpool.eu:3333".to_string(),
-            pool_password: "x".to_string(),
-            wallet_address: "48y3RCT5SzSS4jumHm9rRL91eWWzd6xcVGSCF1KUZGWYJ6npqwFxHee4xkLLNUqY4NjiswdJhxFALeRqzncHoToeJMg2bhL".to_string()
+            url: "xmrpool.eu:3333".to_string(),
+            pass: "x".to_string(),
+            user: "48y3RCT5SzSS4jumHm9rRL91eWWzd6xcVGSCF1KUZGWYJ6npqwFxHee4xkLLNUqY4NjiswdJhxFALeRqzncHoToeJMg2bhL".to_string()
         }
     }
 }

@@ -21,4 +21,5 @@ pub mod metric;
 pub mod randomx;
 pub mod stratum;
 pub mod timer;
+pub mod utils;
 pub mod worker;

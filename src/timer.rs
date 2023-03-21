@@ -8,7 +8,7 @@ use std;
 use std::thread;
 use std::time::Duration;
 
-const DONATION_THRESHOLD: f64 = 1.0 / 10.0;
+pub const DONATION_THRESHOLD: f64 = 1.0 / 10.0;
 
 #[derive(Debug, PartialEq)]
 pub enum TickAction {
@@ -17,40 +17,23 @@ pub enum TickAction {
 }
 
 pub fn interval_mod_setup(
-    worker_conf: &WorkerConfig,
-    donation_conf: &DonationConfig,
+    autotune_interval: Option<u64>,
+    donation_percentage: f64,
 ) -> (u64, Option<u64>) {
-    if donation_conf.percentage >= DONATION_THRESHOLD && !worker_conf.auto_tune {
-        return (100 * 60, Some(1));
-    }
-
-    let interval = if worker_conf.auto_tune {
-        info!("auto_tune enabled, starting arm clock signaling");
-        60 * worker_conf.auto_tune_interval_minutes
-    } else {
-        info!("auto_tune disabled");
-        std::u64::MAX
-    };
-    let donation_mod = if donation_conf.percentage >= DONATION_THRESHOLD {
-        if donation_conf.percentage >= 100.0 {
-            Some(1)
-        } else {
-            Some((100.0 / worker_conf.auto_tune_interval_minutes as f64).ceil() as u64)
-        }
-    } else {
-        None
-    };
-    (interval, donation_mod)
+    todo!("Replace the entire control infrastucture")
 }
 
 /// clock for bandit arm change and donation
 pub fn setup(worker_conf: &WorkerConfig, donation_conf: &DonationConfig) -> Receiver<TickAction> {
     let (clock_sndr, clock_rcvr) = unbounded();
 
-    let (reg_interval, donation_mod) = interval_mod_setup(worker_conf, donation_conf);
+    let (reg_interval, donation_mod) = interval_mod_setup(
+        worker_conf.autotune.as_ref().map(|a| a.interval_minutes),
+        donation_conf.0,
+    );
     let mut interval = reg_interval;
 
-    let donation_percentage = donation_conf.percentage;
+    let donation_percentage = donation_conf.0;
     //if auto_tune is not enabled, never send the clock signal for drawing
     //a new arm, effectively disabling auto tuning
     thread::Builder::new()
