@@ -7,6 +7,12 @@ edition = '2021'
 [lib]
 name = "mithril"
 
+[workspace]
+members = [
+    ".",
+    "stratum"
+]
+
 [dependencies]
 blake2b_simd = "1.0.0"
 serde = "1.0.137"
