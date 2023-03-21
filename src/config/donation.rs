@@ -103,7 +103,7 @@ fn parse_donation<'de, D: Deserializer<'de>>(deserializer: D) -> Result<f64, D::
         where
             E: de::Error,
         {
-            if 0.0 <= percentage && percentage <= 100.0 {
+            if (0.0..=100.0).contains(&percentage) {
                 Ok(DonationConfig(percentage))
             } else {
                 Err(de::Error::invalid_value(
@@ -136,7 +136,7 @@ fn parse_donation<'de, D: Deserializer<'de>>(deserializer: D) -> Result<f64, D::
                     return match value {
                         Value::Boolean(enabled) => self.visit_bool(enabled),
                         Value::Float(percentage) => self.visit_f64(percentage),
-                        Value::Integer(percentage) => self.visit_i64(percentage as i64),
+                        Value::Integer(percentage) => self.visit_i64(percentage),
                         _ => Err(serde::de::Error::invalid_type(
                             de::Unexpected::Other("unsupported type"),
                             &"should be either boolean or number",

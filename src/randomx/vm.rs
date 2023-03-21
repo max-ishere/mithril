@@ -49,18 +49,18 @@ pub struct MemoryRegister {
 }
 
 pub struct Register {
-    pub r: [u64; MAX_REG as usize],
-    pub f: [m128d; MAX_FLOAT_REG as usize],
-    pub e: [m128d; MAX_FLOAT_REG as usize],
-    pub a: [m128d; MAX_FLOAT_REG as usize],
+    pub r: [u64; MAX_REG],
+    pub f: [m128d; MAX_FLOAT_REG],
+    pub e: [m128d; MAX_FLOAT_REG],
+    pub a: [m128d; MAX_FLOAT_REG],
 }
 
 pub fn new_register() -> Register {
     Register {
-        r: [0; MAX_REG as usize],
-        f: [m128d::zero(); MAX_FLOAT_REG as usize],
-        e: [m128d::zero(); MAX_FLOAT_REG as usize],
-        a: [m128d::zero(); MAX_FLOAT_REG as usize],
+        r: [0; MAX_REG],
+        f: [m128d::zero(); MAX_FLOAT_REG],
+        e: [m128d::zero(); MAX_FLOAT_REG],
+        a: [m128d::zero(); MAX_FLOAT_REG],
     }
 }
 

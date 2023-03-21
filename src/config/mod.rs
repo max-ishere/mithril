@@ -73,7 +73,7 @@ impl MithrilConfig {
 
         let error_context = || format!("Parsing config file {path}.");
         let toml: toml::Value = toml::from_str(&conf).with_context(error_context)?;
-        Ok(Self::deserialize(toml).with_context(error_context)?)
+        Self::deserialize(toml).with_context(error_context)
     }
 }
 

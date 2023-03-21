@@ -371,7 +371,7 @@ pub fn nonce_hex(nonce: u32) -> String {
 pub fn with_nonce(blob: &str, nonce: &str) -> String {
     let (a, _) = blob.split_at(78);
     let (_, b) = blob.split_at(86);
-    return format!("{}{}{}", a, nonce, b);
+    format!("{a}{nonce}{b}")
 }
 
 fn check_command_available(rcv: &Receiver<WorkerCmd>) -> Option<WorkerCmd> {

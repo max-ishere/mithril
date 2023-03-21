@@ -15,7 +15,6 @@ use mithril::{
 
 use std::{
     io::{self, Error},
-    path::Path,
     thread,
     time::Duration,
 };

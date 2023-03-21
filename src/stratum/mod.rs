@@ -115,7 +115,7 @@ impl StratumClient {
                 let result = handle_stratum_send(&command_rcv, writer, &pool_conf);
                 if result.is_err() {
                     err_receiver
-                        .send(result.err().expect("result error send thread"))
+                        .send(result.expect_err("result error send thread"))
                         .expect("sending error in send thread");
                 }
                 info!("stratum send thread ended");
@@ -134,7 +134,7 @@ impl StratumClient {
                 let result = handle_stratum_receive(reader, &action_rcv, &miner_id);
                 if result.is_err() {
                     err_receiver
-                        .send(result.err().expect("result error recv thread"))
+                        .send(result.expect_err("result error recv thread"))
                         .expect("sending error in recv thread");
                 }
                 info!("stratum receive thread ended");
@@ -343,8 +343,7 @@ fn handle_stratum_receive(
 fn is_known_ok(
     result: Result<stratum_data::OkResponse, serde_json::Error>,
 ) -> Option<StratumAction> {
-    if result.is_ok() {
-        let unwrapped = result.expect("result unwrap");
+    if let Ok(unwrapped) = result {
         if unwrapped.result.status == "OK" && unwrapped.result.id.is_none() {
             return Some(StratumAction::Ok);
         } else if unwrapped.result.status == "KEEPALIVED" && unwrapped.result.id.is_none() {
@@ -363,8 +362,8 @@ pub fn parse_line_dispatch_result(
     let action;
 
     let error: Result<stratum_data::ErrorResult, serde_json::Error> = serde_json::from_str(line);
-    if error.is_ok() {
-        let stratum_data::ErrorResult { error: err_details } = error.expect("error unwrap");
+    if let Ok(error) = error {
+        let stratum_data::ErrorResult { error: err_details } = error;
         action = StratumAction::Error {
             err: format!(
                 "error received: {} (code {}, raw json {})",
@@ -375,13 +374,13 @@ pub fn parse_line_dispatch_result(
         let ok_result: Result<stratum_data::OkResponse, serde_json::Error> =
             serde_json::from_str(line);
         let known_ok = is_known_ok(ok_result);
-        if known_ok.is_some() {
-            action = known_ok.expect("known_ok unwrap");
+        if let Some(known_ok) = known_ok {
+            action = known_ok;
         } else {
             let result: Result<stratum_data::Method, serde_json::Error> =
                 serde_json::from_str(line);
-            if result.is_ok() {
-                let stratum_data::Method { method } = result.expect("result unwrap");
+            if let Ok(result) = result {
+                let stratum_data::Method { method } = result;
                 match method.as_ref() {
                     "job" => action = parse_job(line, miner_id_mutx),
                     _ => {

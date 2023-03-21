@@ -189,7 +189,7 @@ impl VmMemory {
             let rl_cached = &mem[item_num as usize];
             if let Some(rl) = rl_cached {
                 unsafe {
-                    let raw: *const i8 = std::mem::transmute(rl);
+                    let raw: *const i8 = rl as *const [u64; 8] as *const i8;
                     _mm_prefetch(raw, _MM_HINT_NTA);
                 }
             }
